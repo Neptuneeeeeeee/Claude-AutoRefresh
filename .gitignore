@@ -6,8 +6,8 @@ config.env
 
 # 运行日志
 *.log
-autostart.log
-autostart.err.log
+autorefresh.log
+autorefresh.err.log
 
 # 锁目录 (运行锁)
 .run.lock/

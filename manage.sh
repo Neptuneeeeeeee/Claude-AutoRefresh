@@ -11,15 +11,15 @@ fi
 set -e
 
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SECURE_DIR="$HOME/.claude-autostart"
+SECURE_DIR="$HOME/.claude-autorefresh"
 
-LABEL="com.jiaweili.claude-autostart"
+LABEL="com.jiaweili.claude-autorefresh"
 PLIST_NAME="$LABEL.plist"
 PLIST_DEST="$HOME/Library/LaunchAgents/$PLIST_NAME"
 SERVICE_DOMAIN="gui/$(id -u)"
 
-LOG_FILE="$SECURE_DIR/autostart.log"
-ERR_FILE="$SECURE_DIR/autostart.err.log"
+LOG_FILE="$SECURE_DIR/autorefresh.log"
+ERR_FILE="$SECURE_DIR/autorefresh.err.log"
 
 show_help() {
     echo "=========================================================="
@@ -232,7 +232,7 @@ build_schedule_config() {
 }
 
 check_sources() {
-    [ -f "$PROJECT_DIR/autostart.sh" ] || fail "找不到主运行脚本: $PROJECT_DIR/autostart.sh"
+    [ -f "$PROJECT_DIR/autorefresh.sh" ] || fail "找不到主运行脚本: $PROJECT_DIR/autorefresh.sh"
     if [ ! -f "$PROJECT_DIR/config.env" ]; then
         if [ -f "$PROJECT_DIR/config.env.example" ]; then
             echo "[Info] 未找到 config.env，已自动从 config.env.example 复制默认配置。"
@@ -257,7 +257,7 @@ generate_plist() {
     <key>ProgramArguments</key>
     <array>
         <string>/bin/zsh</string>
-        <string>$SECURE_DIR/autostart.sh</string>
+        <string>$SECURE_DIR/autorefresh.sh</string>
     </array>
 
     <key>StartCalendarInterval</key>
@@ -332,9 +332,9 @@ case "$1" in
         mkdir -p "$HOME/Library/LaunchAgents"
         chmod 700 "$SECURE_DIR"
 
-        cp "$PROJECT_DIR/autostart.sh" "$SECURE_DIR/autostart.sh"
+        cp "$PROJECT_DIR/autorefresh.sh" "$SECURE_DIR/autorefresh.sh"
         cp "$PROJECT_DIR/config.env" "$SECURE_DIR/config.env"
-        chmod 755 "$SECURE_DIR/autostart.sh"
+        chmod 755 "$SECURE_DIR/autorefresh.sh"
         chmod 600 "$SECURE_DIR/config.env"
         touch "$LOG_FILE" "$ERR_FILE"
         chmod 600 "$LOG_FILE" "$ERR_FILE"
@@ -359,7 +359,7 @@ case "$1" in
             echo "已移除 LaunchAgent: $PLIST_DEST"
         fi
 
-        if [ "$SECURE_DIR" = "$HOME/.claude-autostart" ] && [ -d "$SECURE_DIR" ]; then
+        if [ "$SECURE_DIR" = "$HOME/.claude-autorefresh" ] && [ -d "$SECURE_DIR" ]; then
             rm -rf "$SECURE_DIR"
             echo "已移除运行目录: $SECURE_DIR"
         fi
@@ -368,19 +368,19 @@ case "$1" in
         ;;
 
     test-now)
-        [ -f "$SECURE_DIR/autostart.sh" ] || fail "尚未安装，请先运行 ./manage.sh install"
-        "$SECURE_DIR/autostart.sh" --no-delay
+        [ -f "$SECURE_DIR/autorefresh.sh" ] || fail "尚未安装，请先运行 ./manage.sh install"
+        "$SECURE_DIR/autorefresh.sh" --no-delay
         ;;
 
     run)
-        [ -f "$SECURE_DIR/autostart.sh" ] || fail "尚未安装，请先运行 ./manage.sh install"
-        "$SECURE_DIR/autostart.sh"
+        [ -f "$SECURE_DIR/autorefresh.sh" ] || fail "尚未安装，请先运行 ./manage.sh install"
+        "$SECURE_DIR/autorefresh.sh"
         ;;
 
     notify-test)
-        [ -f "$PROJECT_DIR/autostart.sh" ] || fail "找不到主运行脚本: $PROJECT_DIR/autostart.sh"
+        [ -f "$PROJECT_DIR/autorefresh.sh" ] || fail "找不到主运行脚本: $PROJECT_DIR/autorefresh.sh"
         echo "正在发送测试通知（使用项目目录中的最新脚本）..."
-        /bin/zsh "$PROJECT_DIR/autostart.sh" --notify-test
+        /bin/zsh "$PROJECT_DIR/autorefresh.sh" --notify-test
         echo ""
         echo "如果通知中心没有出现通知，请检查："
         echo "  1. 系统设置 → 通知：找到 Script Editor（或 osascript / terminal-notifier），确认“允许通知”已开启。"
