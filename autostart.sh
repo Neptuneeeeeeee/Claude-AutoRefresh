@@ -180,7 +180,10 @@ else
     cd "$SCRIPT_DIR"
 fi
 
-command -v claude >/dev/null 2>&1 || fail "'claude' CLI not found in PATH. Current PATH: $PATH"
+if ! command -v claude >/dev/null 2>&1; then
+    notify_user "Claude 自动刷新 · 错误" "未找到 claude 命令行。请运行：npm install -g @anthropic-ai/claude-code"
+    fail "'claude' CLI not found in PATH. Please install it using: npm install -g @anthropic-ai/claude-code\nCurrent PATH: $PATH"
+fi
 
 CLAUDE_BIN="$(command -v claude)"
 CLAUDE_VERSION="$("$CLAUDE_BIN" --version 2>&1 | tr '\n' ' ')"

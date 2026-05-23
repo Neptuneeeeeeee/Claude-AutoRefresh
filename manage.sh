@@ -280,7 +280,24 @@ EOF
 
     plutil -lint "$PLIST_TMP" >/dev/null
     mv "$PLIST_TMP" "$PLIST_DEST"
-    chmod 644 "$PLIST_DEST"
+}
+
+check_claude_installed() {
+    # 临时补充常见 Homebrew/Node 路径以进行检测
+    local TMP_PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+    if ! PATH="$TMP_PATH" command -v claude >/dev/null 2>&1; then
+        echo "=========================================================="
+        echo "⚠️  [警告] 检测到系统尚未安装 Claude Code 命令行工具！"
+        echo "=========================================================="
+        echo "定时任务需要依赖 'claude' 命令行才能正常运行。"
+        echo "请先在终端中运行以下命令进行安装："
+        echo ""
+        echo "    npm install -g @anthropic-ai/claude-code"
+        echo ""
+        echo "安装完成后，请务必先运行一次 'claude' 完成首次登录授权。"
+        echo "=========================================================="
+        echo ""
+    fi
 }
 
 service_loaded() {
@@ -305,6 +322,7 @@ stop_service() {
 
 case "$1" in
     install)
+        check_claude_installed
         check_sources
         load_config "$PROJECT_DIR/config.env"
         build_schedule_config
