@@ -403,20 +403,22 @@ case "$1" in
         ;;
 
     logs)
-        if [ -f "$LOG_FILE" ]; then
+        if [ -f "$LOG_FILE" ] && [ -s "$LOG_FILE" ]; then
             echo "=== 最近 50 行输出日志 ($LOG_FILE) ==="
             tail -n 50 "$LOG_FILE"
         else
-            echo "尚未产生输出日志。"
+            echo "=== 最近 50 行输出日志 ($LOG_FILE) ==="
+            echo "（暂无自动运行记录，服务将在到达设定时刻后自动触发并记录日志）"
         fi
         ;;
 
     errlogs)
-        if [ -f "$ERR_FILE" ]; then
+        if [ -f "$ERR_FILE" ] && [ -s "$ERR_FILE" ]; then
             echo "=== 最近 50 行错误日志 ($ERR_FILE) ==="
             tail -n 50 "$ERR_FILE"
         else
-            echo "尚未产生错误日志。"
+            echo "=== 最近 50 行错误日志 ($ERR_FILE) ==="
+            echo "（暂无运行错误记录，运行一切正常或尚未触发）"
         fi
         ;;
 
