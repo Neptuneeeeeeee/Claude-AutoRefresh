@@ -64,35 +64,4 @@ cd Claude-AutoRefresh
 > * **一次运行，永久全自动**：运行 `./manage.sh install` 之后，后台服务会自动接管。哪怕电脑关机、重启，该服务也会在系统启动后自动按时点工作，无需任何额外手动操作。
 > * **自定义触发时间**：如果想修改时间，随时可以编辑自动生成的 `config.env` 中的 `SCHEDULE_TIMES`，然后再次运行 `./manage.sh install` 重新载入即可。
 
----
 
-## 🛠️ 常用管理命令
-
-在终端通过运行 `./manage.sh` 加子命令即可快速进行维护和测试：
-
-```bash
-./manage.sh test-now      # 立即在后台触发一次 Claude 刷新测试（跳过随机延迟）
-./manage.sh status        # 检查当前后台定时服务运行状态
-./manage.sh logs          # 查看后台运行日志（最近 50 行）
-./manage.sh errlogs       # 查看后台错误日志
-./manage.sh uninstall     # 停止服务，并干净地卸载与移除所有本地运行文件
-```
-
----
-
-## ⚙️ 核心配置项详解 (`config.env`)
-
-*   `SCHEDULE_TIMES`: 触发时间点（格式 `HH:MM`，多个用英文逗号分隔）。
-*   `MAX_RANDOM_DELAY_SECS`: 默认 `300`。最大随机延迟秒数，避免请求过于精确，设为 `0` 则到点立即触发。
-*   `ENABLE_NOTIFICATIONS`: 默认 `true`。是否在开始刷新、成功或失败时向 macOS 通知中心发送系统弹窗提醒。
-*   `REFRESH_MESSAGE`: 默认 `"Hi"`。发送给 Claude Code 的最短交互提示词。
-*   `TARGET_WORKSPACE`: 默认 `"$HOME/.claude-autorefresh"`。Claude 执行时的临时工作目录。
-
----
-
-## 🛡️ 安全与健壮性设计
-
-*   **安全配置解析**：不采用 `source config.env` 加载，使用文本白名单逐行解析，完全杜绝因配置文件篡改而导致的恶意 shell 代码注入漏洞。
-*   **权限沙箱隔离**：同步的运行副本及目录均设为严格的 `700`/`600` 权限，防止本机其他越权用户读取。
-*   **并发排他锁**：配置了运行目录排他锁，防止极端情况下重复触发导致多个 Claude 进程冲突。
-*   **环境鲁棒性**：在别人的电脑上哪怕未安装 `terminal-notifier`，通知功能也会自适应降级至 macOS 原生 AppleScript 通知，确保 100% 能够发出系统弹窗。
