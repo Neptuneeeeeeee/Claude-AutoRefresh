@@ -37,6 +37,13 @@ claude -p "Hi"
 
 ## 🚀 快速开始
 
+> [!NOTE]
+> **📋 运行前提**：本工具需要依赖官方的 **Claude Code**。在配置此工具前，请确保您已经安装了 Claude Code。
+> 如果尚未安装，可以直接在终端运行以下官方指令完成全局安装：
+> ```bash
+> npm install -g @anthropic-ai/claude-code
+> ```
+
 只需极简的 3 步，即可快速将项目运行起来：
 
 ### 1. 克隆项目到本地
